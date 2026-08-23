@@ -19,7 +19,6 @@ export default defineConfig({
         orientation: "portrait",
         theme_color: "#3157d5",
         background_color: "#f8f9fd",
-
         icons: [
           {
             src: "pwa-192.png",
@@ -42,7 +41,7 @@ export default defineConfig({
     }),
   ],
 
-  base: "/StockTrace-PWA/",
+  base: "/StockTrace-front/",
 
   server: {
     host: "127.0.0.1",
