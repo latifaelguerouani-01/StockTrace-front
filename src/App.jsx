@@ -1,9 +1,10 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   Activity, AlertTriangle, ArrowDownToLine, ArrowUpFromLine, Bell, Box,
-  ChevronRight, CircleUserRound, FolderOpen, Info, Languages, LayoutDashboard,
-  LogOut, Menu, Moon, Package, Pencil, Plus, RefreshCw, Search, ScanBarcode,
-  Settings, ShieldCheck, Sun, Trash2, TrendingDown, TrendingUp, UserRound, X
+  ChevronRight, CircleUserRound, FileText, FolderOpen, Info, Languages,
+  LayoutDashboard, LogOut, Menu, Moon, Package, Pencil, Plus, RefreshCw,
+  Search, ScanBarcode, Settings, ShieldCheck, Sun, Trash2, TrendingDown,
+  TrendingUp, UserRound, X
 } from "lucide-react";
 import api from "./api";
 import { tr } from "./i18n";
@@ -249,7 +250,54 @@ function Header({ lang, screen, role, openMenu, onAlerts }) {
 function PageHead({ title, subtitle, action }) {
   return <div className="page-head"><div><h1>{title}</h1>{subtitle && <p>{subtitle}</p>}</div>{action}</div>;
 }
+const MONTHS = {
+  fr: [
+    "Janvier",
+    "Février",
+    "Mars",
+    "Avril",
+    "Mai",
+    "Juin",
+    "Juillet",
+    "Août",
+    "Septembre",
+    "Octobre",
+    "Novembre",
+    "Décembre"
+  ],
 
+  en: [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December"
+  ],
+
+  ar: [
+    "يناير",
+    "فبراير",
+    "مارس",
+    "أبريل",
+    "ماي",
+    "يونيو",
+    "يوليوز",
+    "غشت",
+    "شتنبر",
+    "أكتوبر",
+    "نونبر",
+    "دجنبر"
+  ]
+};
+
+const getMonths = (lang) => MONTHS[lang] || MONTHS.fr;
 function Dashboard({ lang, role, go, notify }) {
   const [products, setProducts] = useState([]);
   const [movements, setMovements] = useState([]);
@@ -277,25 +325,40 @@ function Dashboard({ lang, role, go, notify }) {
 
   useEffect(() => { load(); }, [load]);
 
-  const generateMonthlyReport = async () => {
+    const generateMonthlyReport = async () => {
     try {
       setReportLoading(true);
+
       const response = await api.get(
         `/stock-movements/report?month=${reportMonth}&year=${reportYear}`,
-        { responseType: "blob" }
+        {
+          responseType: "blob",
+        }
       );
-      const blob = new Blob([response.data], { type: "application/pdf" });
+
+      const blob = new Blob([response.data], {
+        type: "application/pdf",
+      });
+
       const url = window.URL.createObjectURL(blob);
+
       const link = document.createElement("a");
       link.href = url;
-      link.download = `StockTrace_Rapport_${String(reportMonth).padStart(2, "0")}_${reportYear}.pdf`;
+      link.download = `StockTrace_Rapport_${String(reportMonth).padStart(
+        2,
+        "0"
+      )}_${reportYear}.pdf`;
+
       document.body.appendChild(link);
       link.click();
       link.remove();
+
       window.URL.revokeObjectURL(url);
+
+      notify(tr(lang, "reportGenerated"));
     } catch (error) {
       console.error("Erreur génération rapport PDF:", error);
-      alert("Impossible de générer le rapport PDF.");
+      notify(tr(lang, "reportError"), "error");
     } finally {
       setReportLoading(false);
     }
@@ -351,45 +414,72 @@ function Dashboard({ lang, role, go, notify }) {
       </div>
 
       {/* MONTHLY REPORT CARD */}
-      <section className="panel monthly-report-card">
-        <div className="monthly-report-header">
-          <div>
-            <h3>Rapport mensuel</h3>
-            <p>Générer un rapport PDF des mouvements de stock</p>
-          </div>
-          <div className="monthly-report-icon">📄</div>
-        </div>
-        <div className="monthly-report-controls">
-          <div className="report-field">
-            <label>Mois</label>
-            <select value={reportMonth} onChange={(e) => setReportMonth(Number(e.target.value))}>
-              <option value={1}>Janvier</option>
-              <option value={2}>Février</option>
-              <option value={3}>Mars</option>
-              <option value={4}>Avril</option>
-              <option value={5}>Mai</option>
-              <option value={6}>Juin</option>
-              <option value={7}>Juillet</option>
-              <option value={8}>Août</option>
-              <option value={9}>Septembre</option>
-              <option value={10}>Octobre</option>
-              <option value={11}>Novembre</option>
-              <option value={12}>Décembre</option>
-            </select>
-          </div>
-          <div className="report-field">
-            <label>Année</label>
-            <select value={reportYear} onChange={(e) => setReportYear(Number(e.target.value))}>
-              {Array.from({ length: 5 }, (_, index) => new Date().getFullYear() - index).map((year) => (
-                <option key={year} value={year}>{year}</option>
-              ))}
-            </select>
-          </div>
-          <button className="btn primary generate-report-btn" onClick={generateMonthlyReport} disabled={reportLoading}>
-            {reportLoading ? "Génération..." : "Générer le rapport PDF"}
-          </button>
-        </div>
-      </section>
+<section className="panel monthly-report-card">
+  <div className="monthly-report-header">
+    <div>
+      <span className="eyebrow">
+        {tr(lang, "monthlyReport")}
+      </span>
+
+      <h3>{tr(lang, "monthlyReportTitle")}</h3>
+
+      <p>{tr(lang, "monthlyReportDescription")}</p>
+    </div>
+
+    <div className="monthly-report-icon">
+      <FileText size={26} />
+    </div>
+  </div>
+
+  <div className="monthly-report-controls">
+
+    <div className="report-field">
+      <label>{tr(lang, "month")}</label>
+
+      <select
+        value={reportMonth}
+        onChange={(e) => setReportMonth(Number(e.target.value))}
+      >
+        {getMonths(lang).map((month, index) => (
+          <option key={index + 1} value={index + 1}>
+            {month}
+          </option>
+        ))}
+      </select>
+    </div>
+
+    <div className="report-field">
+      <label>{tr(lang, "year")}</label>
+
+      <select
+        value={reportYear}
+        onChange={(e) => setReportYear(Number(e.target.value))}
+      >
+        {Array.from(
+          { length: new Date().getFullYear() - 2026 + 1 },
+          (_, index) => 2026 + index
+        ).map((year) => (
+          <option key={year} value={year}>
+            {year}
+          </option>
+        ))}
+      </select>
+    </div>
+
+    <button
+      className="btn primary generate-report-btn"
+      onClick={generateMonthlyReport}
+      disabled={reportLoading}
+    >
+      <FileText size={17} />
+
+      {reportLoading
+        ? tr(lang, "generatingReport")
+        : tr(lang, "generateReport")}
+    </button>
+
+  </div>
+</section>
 
       <section className="panel">
         <div className="panel-head">
