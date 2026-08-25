@@ -283,16 +283,17 @@ body{background:var(--bg);color:var(--text)}.app-shell{min-height:100vh;display:
   }
 }
 /* =========================
-   MONTHLY REPORT - REVISED
+   MONTHLY REPORT
+   LIGHT + DARK MODE
 ========================= */
 
 .monthly-report-card {
-  background: #ffffff;
-  border: 1px solid var(--border);
+  background: var(--panel);
+  border: 1px solid var(--line);
   border-radius: 18px;
   padding: 24px;
   margin-top: 24px;
-  box-shadow: 0 8px 25px rgba(23, 32, 51, 0.05);
+  box-shadow: var(--shadow);
 }
 
 .monthly-report-header {
@@ -322,7 +323,10 @@ body{background:var(--bg);color:var(--text)}.app-shell{min-height:100vh;display:
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #eef2ff;
+
+  background: rgba(39, 93, 245, 0.10);
+  color: var(--primary);
+
   font-size: 22px;
 }
 
@@ -349,33 +353,41 @@ body{background:var(--bg);color:var(--text)}.app-shell{min-height:100vh;display:
 .report-field select {
   height: 42px;
   padding: 0 12px;
-  border: 1px solid var(--border);
+
+  border: 1px solid var(--line);
   border-radius: 10px;
-  background: #fff;
+
+  background: var(--bg);
   color: var(--text);
+
   font-size: 14px;
   outline: none;
 }
 
 .report-field select:focus {
-  border-color: var(--blue);
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(39, 93, 245, 0.10);
 }
 
 .generate-report-btn {
   height: 42px;
   padding: 0 20px;
+
   border: none;
   border-radius: 10px;
-  background: var(--blue);
+
+  background: var(--primary);
   color: white;
+
   font-size: 14px;
   font-weight: 600;
+
   cursor: pointer;
   transition: 0.2s ease;
 }
 
 .generate-report-btn:hover {
-  background: var(--blue2);
+  background: var(--primary2);
   transform: translateY(-1px);
 }
 
@@ -385,6 +397,45 @@ body{background:var(--bg);color:var(--text)}.app-shell{min-height:100vh;display:
   transform: none;
 }
 
+/* =========================
+   MONTHLY REPORT - DARK MODE
+========================= */
+
+[data-theme="dark"] .monthly-report-card {
+  background: var(--panel);
+  border-color: var(--line);
+  box-shadow: var(--shadow);
+}
+
+[data-theme="dark"] .monthly-report-icon {
+  background: rgba(99, 126, 255, 0.14);
+  color: #8da5ff;
+}
+
+[data-theme="dark"] .report-field select {
+  background: var(--bg);
+  color: var(--text);
+  border-color: var(--line);
+}
+
+[data-theme="dark"] .report-field select option {
+  background: var(--panel);
+  color: var(--text);
+}
+
+[data-theme="dark"] .generate-report-btn {
+  background: var(--primary);
+  color: #fff;
+}
+
+[data-theme="dark"] .generate-report-btn:hover {
+  background: var(--primary2);
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+
 @media (max-width: 700px) {
 
   .monthly-report-controls {
@@ -393,6 +444,10 @@ body{background:var(--bg);color:var(--text)}.app-shell{min-height:100vh;display:
   }
 
   .report-field {
+    width: 100%;
+  }
+
+  .report-field select {
     width: 100%;
   }
 
