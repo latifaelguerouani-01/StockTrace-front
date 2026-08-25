@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || "https://stocktrace-de9v361c.b4a.run/api",
+  baseURL: import.meta.env.VITE_API_URL || "https://stocktrace-vxk4dxjq.b4a.run/api",
   headers: { "Content-Type": "application/json" },
 });
 
